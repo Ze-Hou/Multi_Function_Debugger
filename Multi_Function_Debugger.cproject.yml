@@ -151,5 +151,5 @@ project:
         - file: ./BSP/MPU/mpu.c
         - file: ./BSP/SYSTEM/system.c
         - file: ./BSP/DELAY/delay.c
-        - file: ./BSP/Timer/timer.c
+        - file: ./BSP/TIMER/timer.c
         - file: ./BSP/USART/usart.c
