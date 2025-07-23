@@ -1,0 +1,20 @@
+; ***********************************************************************
+; *** Scatter-Loading Description ***
+; ***********************************************************************
+
+LR_IROM1 0x08000000 0x003C0000 {    ; load region size_region
+  ER_IROM1 0x08000000 0x003C0000 {  ; load address = execution address
+   *.o (RESET, +First)
+   *(InRoot$$Sections)
+   .ANY (+RO)
+   .ANY (+XO)
+  }
+  RW_IRAM1 0x24020000 0x000B0000 {  ; RW data
+   .ANY (+RW +ZI)
+  }
+  RW_IRAM2 0x00000400 0x00007C00 {
+    startup_gd32h7xx.o (+ZI)
+   .ANY (+RW +ZI)
+  }
+}
+

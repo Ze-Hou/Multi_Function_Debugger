@@ -1,0 +1,155 @@
+# A project translates into one executable or library.
+project:
+  # List executable file formats to be generated.
+  output:
+    type:
+      - elf
+      - hex
+      - map
+
+  # 特定于编译器、目标类型或构建类型的配置
+  setups:
+    - setup: Arm Compiler 6 project setup
+      for-compiler: AC6
+      processor:
+        fpu: dp
+
+      # 生成调试信息
+      debug: on
+
+      # 设置编译器优化级别, none -> -O0, debug -> -O1, balanced -> -O2, speed -> -O3, size -> -Oz
+      optimize: debug
+
+      # 定义 C/C++ 代码生成的符号设置
+      define:
+        - USE_STDPERIPH_DRIVER
+        - GD32H7XX
+        - GD32H7XXI
+
+      # additional include file paths for C/C++ source files.
+      add-path:
+        - ./USER
+        - ./CORE
+        - ./FIRMWARE/Include
+        - ./BSP
+
+      linker:
+        - script: ./USER/Multi_Function_Debugger.sct
+
+      misc:
+        - C-CPP:
+            # - -flto                               # 启用链接时优化（Link Time Optimization）
+            - -fno-rtti                           # 禁用 C++ 的运行时类型识别（RTTI）
+            - -funsigned-char                     # 默认将 char 类型视为无符号
+            - -fshort-enums                       # 枚举类型使用最小可能的类型存储
+            - -fshort-wchar                       # wchar_t 类型使用更短的存储
+            - -ffunction-sections                 # 每个函数单独放到一个 section，便于去除未用代码
+            - -Wno-packed                         # 关闭 packed 相关的警告
+            - -Wno-missing-variable-declarations  # 关闭缺少变量声明的警告
+            - -Wno-missing-prototypes             # 关闭缺少函数原型的警告
+            - -Wno-missing-noreturn               # 关闭缺少 noreturn 属性的警告
+            - -Wno-sign-conversion                # 关闭符号转换相关的警告
+            - -Wno-nonportable-include-path       # 关闭非移植性头文件路径的警告
+            - -Wno-reserved-id-macro              # 关闭保留标识符宏的警告
+            - -Wno-unused-macros                  # 关闭未使用宏的警告
+            - -Wno-documentation-unknown-command  # 关闭文档注释中未知命令的警告
+            - -Wno-documentation                  # 关闭文档注释相关的警告
+            - -Wno-license-management             # 关闭许可证管理相关的警告
+            - -Wno-parentheses-equality           # 关闭括号内相等比较的警告
+            - -Wno-invalid-source-encoding        # 关闭无效源码编码的警告
+          C:
+            - -std=c99                            # 使用 C99 标准编译 C 代码
+          CPP:
+            - -xc++                               # 指定输入文件为 C++ 源码
+            - -std=c++11                          # 使用 C++11 标准
+            - -fno-exceptions                     # 禁用 C++ 异常处理
+          ASM:
+            - -masm=auto                          # 自动选择汇编语法（ARM/GNU）
+          Link:
+            - --map                               # 生成链接映射文件
+            - --load_addr_map_info                # 生成加载地址映射信息
+            - --xref                              # 生成交叉引用信息
+            - --callgraph                         # 生成调用图信息
+            - --symbols                           # 生成符号表
+            - --info sizes                        # 输出各段大小信息
+            - --info totals                       # 输出总信息
+            - --info unused                       # 输出未使用的段信息
+            - --info veneers                      # 输出跳板（veneer）信息
+            # - --lto                               # 启用链接时优化
+            - --strict                            # 启用严格模式
+            - --summary_stderr                    # 将摘要信息输出到标准错误
+            - --info summarysizes                 # 输出摘要大小
+
+  # 源文件分组及其源文件列表
+  groups:
+    - group: USER
+      files:
+        - file: ./USER/main.c
+        - file: ./USER/system_gd32h7xx.c
+        - file: ./USER/gd32h7xx_it.c
+
+    - group: CORE
+      files:
+        - file: ./CORE/startup_gd32h7xx.s
+
+    - group: FIRMWARE
+      files:
+        - file: ./FIRMWARE/Source/gd32h7xx_adc.c
+        - file: ./FIRMWARE/Source/gd32h7xx_can.c
+        - file: ./FIRMWARE/Source/gd32h7xx_cau.c
+        - file: ./FIRMWARE/Source/gd32h7xx_cau_aes.c
+        - file: ./FIRMWARE/Source/gd32h7xx_cau_des.c
+        - file: ./FIRMWARE/Source/gd32h7xx_cau_tdes.c
+        - file: ./FIRMWARE/Source/gd32h7xx_cmp.c
+        - file: ./FIRMWARE/Source/gd32h7xx_cpdm.c
+        - file: ./FIRMWARE/Source/gd32h7xx_crc.c
+        - file: ./FIRMWARE/Source/gd32h7xx_ctc.c
+        - file: ./FIRMWARE/Source/gd32h7xx_dac.c
+        - file: ./FIRMWARE/Source/gd32h7xx_dbg.c
+        - file: ./FIRMWARE/Source/gd32h7xx_dci.c
+        - file: ./FIRMWARE/Source/gd32h7xx_dma.c
+        - file: ./FIRMWARE/Source/gd32h7xx_edout.c
+        - file: ./FIRMWARE/Source/gd32h7xx_efuse.c
+        - file: ./FIRMWARE/Source/gd32h7xx_exmc.c
+        - file: ./FIRMWARE/Source/gd32h7xx_exti.c
+        - file: ./FIRMWARE/Source/gd32h7xx_fac.c
+        - file: ./FIRMWARE/Source/gd32h7xx_fmc.c
+        - file: ./FIRMWARE/Source/gd32h7xx_fwdgt.c
+        - file: ./FIRMWARE/Source/gd32h7xx_gpio.c
+        - file: ./FIRMWARE/Source/gd32h7xx_hau.c
+        - file: ./FIRMWARE/Source/gd32h7xx_hau_sha_md5.c
+        - file: ./FIRMWARE/Source/gd32h7xx_hpdf.c
+        - file: ./FIRMWARE/Source/gd32h7xx_hwsem.c
+        - file: ./FIRMWARE/Source/gd32h7xx_i2c.c
+        - file: ./FIRMWARE/Source/gd32h7xx_ipa.c
+        - file: ./FIRMWARE/Source/gd32h7xx_lpdts.c
+        - file: ./FIRMWARE/Source/gd32h7xx_mdio.c
+        - file: ./FIRMWARE/Source/gd32h7xx_mdma.c
+        - file: ./FIRMWARE/Source/gd32h7xx_misc.c
+        - file: ./FIRMWARE/Source/gd32h7xx_ospi.c
+        - file: ./FIRMWARE/Source/gd32h7xx_ospim.c
+        - file: ./FIRMWARE/Source/gd32h7xx_pmu.c
+        - file: ./FIRMWARE/Source/gd32h7xx_rameccmu.c
+        - file: ./FIRMWARE/Source/gd32h7xx_rcu.c
+        - file: ./FIRMWARE/Source/gd32h7xx_rspdif.c
+        - file: ./FIRMWARE/Source/gd32h7xx_rtc.c
+        - file: ./FIRMWARE/Source/gd32h7xx_rtdec.c
+        - file: ./FIRMWARE/Source/gd32h7xx_sai.c
+        - file: ./FIRMWARE/Source/gd32h7xx_sdio.c
+        - file: ./FIRMWARE/Source/gd32h7xx_spi.c
+        - file: ./FIRMWARE/Source/gd32h7xx_syscfg.c
+        - file: ./FIRMWARE/Source/gd32h7xx_timer.c
+        - file: ./FIRMWARE/Source/gd32h7xx_tli.c
+        - file: ./FIRMWARE/Source/gd32h7xx_tmu.c
+        - file: ./FIRMWARE/Source/gd32h7xx_trigsel.c
+        - file: ./FIRMWARE/Source/gd32h7xx_trng.c
+        - file: ./FIRMWARE/Source/gd32h7xx_usart.c
+        - file: ./FIRMWARE/Source/gd32h7xx_vref.c
+        - file: ./FIRMWARE/Source/gd32h7xx_wwdgt.c
+    - group: BSP
+      files:
+        - file: ./BSP/MPU/mpu.c
+        - file: ./BSP/SYSTEM/system.c
+        - file: ./BSP/DELAY/delay.c
+        - file: ./BSP/Timer/timer.c
+        - file: ./BSP/USART/usart.c

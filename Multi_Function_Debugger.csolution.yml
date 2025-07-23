@@ -1,0 +1,36 @@
+solution:
+  # Compilers that can be selected
+  select-compiler:
+    - compiler: AC6
+    - compiler: GCC
+
+  # List of miscellaneous tool-specific controls
+  misc:
+    - for-compiler: AC6 # GDB requires DWARF 5, remove when using uVision Debugger
+      C-CPP:
+        - -gdwarf-5
+      ASM:
+        - -gdwarf-5
+
+  # 选择AC6编译器
+  compiler: AC6
+
+  # List different hardware targets that are used to deploy the solution.
+  target-types:
+    - type: GD32H759IM
+      device: GD32H759IM
+      processor:
+        fpu: dp
+      target-set:
+        - set:
+          images:
+            - project-context: Multi_Function_Debugger
+          debugger:
+            name: Nu-Link@pyOCD
+            port: 3333
+            protocol: swd
+            clock: 10000000
+
+  # List related projects.
+  projects:
+    - project: Multi_Function_Debugger.cproject.yml
