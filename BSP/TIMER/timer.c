@@ -4,21 +4,52 @@
     \version    1.0
     \date       2025-07-23
     \author     Ze-Hou
-
-    This file provides functions for:
-    - USART communication timeout detection using TIMER5, TIMER6, and TIMER15
-    - System watchdog automatic feeding mechanism via TIMER16
-    - FreeRTOS runtime statistics collection using high-precision TIMER50
-    - Timer interrupt service routines for communication timeout handling
-    - Single pulse mode configuration for timeout detection applications
-    - Conditional compilation support for OS and non-OS environments
-    - High-resolution 64-bit timer counting for performance monitoring
-    - Automatic DMA reception completion detection and flag management
 */
 
 #include "gd32h7xx_libopt.h"
 #include "./TIMER/timer.h"
 #include "./USART/usart.h"
+#include "./SYSTEM/system.h"
+#include "freertos_main.h"
+
+
+/*!
+    \brief      configure TIMER2 for general purpose PWM output
+    \param[in]  none
+    \param[out] none
+    \retval     none
+*/
+void timer_general2_config(void)
+{
+    timer_parameter_struct timer_initpara;
+    timer_oc_parameter_struct timer_ocintpara;
+    
+    rcu_periph_clock_enable(RCU_TIMER2);
+    
+    timer_deinit(TIMER2);
+    /* TIMER2 configuration */
+    timer_struct_para_init(&timer_initpara);
+    timer_initpara.prescaler         = 149;
+    timer_initpara.alignedmode       = TIMER_COUNTER_EDGE;
+    timer_initpara.counterdirection  = TIMER_COUNTER_UP;
+    timer_initpara.period            = 999;
+    timer_initpara.clockdivision     = TIMER_CKDIV_DIV1;
+    timer_initpara.repetitioncounter = 0;
+    timer_init(TIMER2, &timer_initpara);
+    
+    /* CH2 configuration in PWM mode 0 */
+    timer_ocintpara.outputstate  = TIMER_CCX_ENABLE;
+    timer_ocintpara.ocpolarity   = TIMER_OC_POLARITY_HIGH;
+
+    timer_channel_output_config(TIMER2, TIMER_CH_2, &timer_ocintpara);
+    timer_channel_output_pulse_value_config(TIMER2, TIMER_CH_2, 500);
+    timer_channel_output_mode_config(TIMER2,TIMER_CH_2,TIMER_OC_MODE_PWM0);
+    timer_channel_output_shadow_config(TIMER2,TIMER_CH_2,TIMER_OC_SHADOW_ENABLE);
+    
+    /* auto reload shadow function enable */
+    timer_auto_reload_shadow_enable(TIMER2);
+    timer_enable(TIMER2);
+}
 
 /*!
     \brief      configure TIMER5 for USART timeout detection
@@ -76,6 +107,30 @@ void timer_base6_config(uint16_t psc, uint32_t period)
     timer_interrupt_flag_clear(TIMER6, TIMER_INT_FLAG_UP);
     timer_interrupt_enable(TIMER6, TIMER_INT_UP);
     nvic_irq_enable(TIMER6_IRQn, 4, 0); 
+}
+
+/*!
+    \brief      configure TIMER14 for general purpose single pulse mode
+    \param[in]  psc: prescaler value
+    \param[in]  period: timer period value
+    \param[out] none
+    \retval     none
+*/
+void timer_general14_config(uint16_t psc, uint16_t period)
+{
+    timer_parameter_struct timer_initpara;
+    
+    rcu_periph_clock_enable(RCU_TIMER14);    /* enable TIMER14 clock */
+    timer_deinit(TIMER14);   /* reset TIMER14 */
+    
+    /* configure TIMER14 parameters */
+    timer_initpara.prescaler         = psc - 1;
+    timer_initpara.period            = (uint16_t)(period - 1);
+    timer_initpara.clockdivision     = TIMER_CKDIV_DIV1;
+    timer_initpara.repetitioncounter = 0xFFFFFFFF;
+    timer_init(TIMER14, &timer_initpara);
+    
+    timer_single_pulse_mode_config(TIMER14, TIMER_SP_MODE_SINGLE);
 }
 
 /*!
@@ -142,6 +197,67 @@ void timer_general16_config(uint16_t psc, uint16_t period)
     timer_enable(TIMER16);
 }
 
+/*!
+    \brief      configure TIMER40 for trigger output generation
+    \param[in]  psc: prescaler value
+    \param[in]  period: timer period value
+    \param[out] none
+    \retval     none
+*/
+void timer_general40_config(uint16_t psc, uint16_t period)
+{
+    timer_parameter_struct timer_initpara;
+    
+    /* enable TIMER40 clock */
+    rcu_periph_clock_enable(RCU_TIMER40);
+    
+    /* reset TIMER40 */
+    timer_deinit(TIMER40);
+    
+    /* configure TIMER40 parameters */
+    timer_initpara.prescaler         = psc - 1;
+    timer_initpara.period            = (uint16_t)(period - 1);
+    timer_initpara.clockdivision     = TIMER_CKDIV_DIV1;
+    timer_initpara.repetitioncounter = 0;
+    timer_init(TIMER40, &timer_initpara);
+    
+    /* enable auto-reload shadow and configure trigger output */
+    timer_auto_reload_shadow_enable(TIMER40);
+    timer_master_output0_trigger_source_select(TIMER40, TIMER_TRI_OUT0_SRC_UPDATE);
+    timer_enable(TIMER40);
+}
+
+/*!
+    \brief      configure TIMER41 for single pulse mode with interrupt
+    \param[in]  psc: prescaler value
+    \param[in]  period: timer period value
+    \param[in]  repetitioncounter: repetition counter value
+    \param[out] none
+    \retval     none
+*/
+void timer_general41_config(uint16_t psc, uint16_t period, uint32_t repetitioncounter)
+{
+    timer_parameter_struct timer_initpara;
+    
+    rcu_periph_clock_enable(RCU_TIMER41);    /* enable TIMER41 clock */
+    timer_deinit(TIMER41);   /* reset TIMER41 */
+    
+    /* configure TIMER41 parameters */
+    timer_initpara.prescaler         = psc - 1;
+    timer_initpara.period            = (uint16_t)(period - 1);
+    timer_initpara.clockdivision     = TIMER_CKDIV_DIV1;
+    timer_initpara.repetitioncounter = repetitioncounter;
+    timer_init(TIMER41, &timer_initpara);
+    
+    timer_single_pulse_mode_config(TIMER41, TIMER_SP_MODE_SINGLE);
+
+    timer_interrupt_flag_clear(TIMER41, TIMER_INT_FLAG_UP);
+    timer_interrupt_enable(TIMER41, TIMER_INT_UP);
+    nvic_irq_enable(TIMER41_IRQn, 6, 0); 
+    
+    timer_auto_reload_shadow_enable(TIMER41);
+    timer_enable(TIMER41);
+}
 #if SYSTEM_SUPPORT_OS
 /*!
     \brief      configure TIMER50 for FreeRTOS runtime statistics
@@ -201,6 +317,28 @@ uint64_t GetTimeForRunTimeCount(void)
     return (uint64_t)timer_counter_read(TIMER50);    /* return current TIMER50 count for stats */
 }
 #endif /* SYSTEM_SUPPORT_OS */
+
+/*!
+    \brief      configure TIMER51 for single pulse mode
+    \param[in]  psc: prescaler value
+    \param[in]  period: timer period value
+    \param[out] none
+    \retval     none
+*/
+void timer_base51_config(uint16_t psc, uint32_t period)
+{
+    timer_parameter_struct timer_initpara;
+    
+    rcu_periph_clock_enable(RCU_TIMER51);    /* 使能TIMX时钟 */
+    timer_deinit(TIMER51);   /* TIMX复位 */
+    
+    /* 配置TIMX */
+    timer_initpara.prescaler = psc - 1;
+    timer_initpara.period = (uint32_t)(period - 1);
+    timer_init(TIMER51, &timer_initpara);
+    
+    timer_single_pulse_mode_config(TIMER51, TIMER_SP_MODE_SINGLE);
+}
 
 /*!
     \brief      TIMER5 interrupt handler for USART timeout
@@ -306,5 +444,34 @@ void TIMER16_IRQHandler(void)
         timer_interrupt_flag_clear(TIMER16, TIMER_INT_FLAG_UP);
         /* ensure watchdog feeding operation completes */
         FWDGT_CTL = FWDGT_KEY_RELOAD;
+    }
+}
+
+static uint8_t wirelessTaskNotifyFlag = 0;
+
+void TIMER41_IRQHandler(void)
+{
+    if(timer_interrupt_flag_get(TIMER41, TIMER_INT_FLAG_UP) == SET)
+    {
+        /* 清除中断标志位 */
+        timer_interrupt_flag_clear(TIMER41, TIMER_INT_FLAG_UP);
+        if(xTaskGetSchedulerState() != taskSCHEDULER_NOT_STARTED)   /* 系统已经运行 */ 
+        {
+            switch(wirelessTaskNotifyFlag)
+            {
+                case 0:
+                    xTaskNotifyFromISR((TaskHandle_t)WIRELESSTask_Handler, (uint32_t)7, (eNotifyAction)eSetValueWithOverwrite, NULL);
+                    wirelessTaskNotifyFlag = 1;
+                    timer_enable(TIMER41);
+                    break;
+                
+                case 1:
+                    xTaskNotifyFromISR((TaskHandle_t)WIRELESSTask_Handler, (uint32_t)8, (eNotifyAction)eSetValueWithOverwrite, NULL);
+                    wirelessTaskNotifyFlag = 0;
+                    break;
+                
+                default: break;
+            }
+        }
     }
 }

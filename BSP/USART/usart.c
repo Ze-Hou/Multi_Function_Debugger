@@ -4,14 +4,6 @@
     \version    1.0
     \date       2025-07-23
     \author     Ze-Hou
-
-    This file provides functions for:
-    - USART/UART initialization and configuration
-    - Printf function redirection to USART
-    - DMA-based data transmission and reception
-    - Interrupt handling for USART communication
-    - Support for multiple USART instances (USART0, USART1, UART4)
-    - Terminal and module communication interfaces
 */
 
 #include "gd32h7xx_libopt.h"

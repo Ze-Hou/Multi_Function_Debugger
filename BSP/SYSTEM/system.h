@@ -4,13 +4,6 @@
     \version    1.0
     \date       2025-07-23
     \author     Ze-Hou
-
-    This header file provides:
-    - System device information structure definitions
-    - Clock frequency information structure
-    - DWT (Data Watchpoint and Trace) register definitions
-    - Function declarations for system management
-    - Memory base address definitions for TCM RAM
 */
 
 #ifndef __SYSTEM_H
@@ -22,7 +15,7 @@
                 0: bare-metal mode
                 1: FreeRTOS support mode
 */
-#define SYSTEM_SUPPORT_OS 0
+#define SYSTEM_SUPPORT_OS 1
 
 /* DWT (Data Watchpoint and Trace) register definitions for precise timing */
 #define  DWT_CYCCNT  *(volatile unsigned int *)0xE0001004    /*!< cycle counter register */

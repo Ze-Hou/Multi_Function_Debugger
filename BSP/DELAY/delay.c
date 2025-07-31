@@ -3,16 +3,7 @@
     \brief      system delay driver based on SysTick timer
     \version    1.0
     \date       2025-07-23
-    \author     GD32H7xx Development Team
-
-    This file provides functions for:
-    - High precision delay based on SysTick timer (microsecond and millisecond level)
-    - FreeRTOS compatible delay functions with automatic mode switching
-    - Microsecond level delay (delay_us) using busy-wait method
-    - Millisecond level delay (delay_ms) with intelligent RTOS/bare-metal switching
-    - Force busy-wait millisecond delay (delay_xms) for critical timing
-    - SysTick timer initialization and configuration
-    - System clock frequency adaptive calculation
+    \author     Ze-Hou
 */
 
 #include "gd32h7xx_libopt.h"

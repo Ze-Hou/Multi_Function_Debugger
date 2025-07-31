@@ -3,12 +3,7 @@
     \brief      header file for system delay driver
     \version    1.0
     \date       2025-07-23
-    \author     GD32H7xx Development Team
-
-    This file contains:
-    - Function declarations for delay operations
-    - Configuration macros for OS support
-    - Parameter definitions and usage instructions
+    \author     Ze-Hou
 */
 
 #ifndef __DELAY_H

@@ -4,14 +4,6 @@
     \version    1.0
     \date       2025-07-23
     \author     Ze-Hou
-
-    This file contains:
-    - Function declarations for MPU region configuration and protection setup
-    - Memory protection interfaces for ITCM, DTCM, AXI SRAM, SRAM0-1, and SDRAM
-    - MPU attribute configuration functions for cache and buffer optimization
-    - ARM Cortex-M7 MPU hardware abstraction layer declarations
-    - Type extension field (TEX) and memory attribute control interfaces
-    - Shareable, cacheable, and bufferable memory configuration functions
 */
 
 #ifndef __MPU_H

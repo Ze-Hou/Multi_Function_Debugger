@@ -4,15 +4,6 @@
     \version    1.0
     \date       2025-07-23
     \author     Ze-Hou
-
-    This file provides functions for:
-    - MPU region configuration and protection setup
-    - Memory access permission control for different memory regions
-    - Cache and buffer configuration for optimal performance
-    - ITCM, DTCM, AXI SRAM, SRAM0-1, and SDRAM protection
-    - TEX (Type Extension) field configuration for memory attributes
-    - Shareable, cacheable, and bufferable memory attribute settings
-    - ARM Cortex-M7 MPU hardware abstraction layer
 */
 
 #include "gd32h7xx_libopt.h"
@@ -77,88 +68,81 @@ uint8_t mpu_set_protection(uint32_t baseaddr, uint32_t size, uint32_t rnum, uint
     \param[in]  none
     \param[out] none
     \retval     none
-    \note       This function sets up MPU protection for:
-                - ITCM (64KB): write-back, no write allocate, cacheable, bufferable
-                - DTCM (128KB): write-back, no write allocate, cacheable, bufferable
-                - AXI SRAM (832KB): write-through, no write allocate, cacheable, non-bufferable
-                - SRAM0-1 (32KB): non-cacheable, non-bufferable for DMA coherency
-                - SDRAM (32MB): write-back, no write allocate, instruction execution disabled
-                All regions are configured with full access permission for privileged mode.
 */
 void mpu_memory_protection(void)
 {
     /* protect entire ITCM, 64KB, write-back, no write allocate */
-    mpu_set_protection( 0x00000000,                             /* base address */
-                        MPU_REGION_SIZE_64KB,                    /* size */
-                        MPU_REGION_NUMBER0,                      /* region 0 */
-                        MPU_INSTRUCTION_EXEC_PERMIT,             /* allow instruction access */
-                        MPU_TEX_TYPE0,                           /* MPU TEX type 0 */
-                        MPU_AP_FULL_ACCESS,                      /* full access */
-                        MPU_ACCESS_NON_SHAREABLE,                /* non-shareable */
-                        MPU_ACCESS_CACHEABLE,                    /* cacheable */
-                        MPU_ACCESS_BUFFERABLE);                  /* bufferable */
+    mpu_set_protection( 0x00000000,                                 /* base address */
+                        MPU_REGION_SIZE_64KB,                           /* size */
+                        MPU_REGION_NUMBER0,                             /* region 0 */
+                        MPU_INSTRUCTION_EXEC_PERMIT,                      /* allow instruction access */
+                        MPU_TEX_TYPE0,                                   /* MPU TEX type 0 */
+                        MPU_AP_FULL_ACCESS,                               /* full access */
+                        MPU_ACCESS_NON_SHAREABLE,                        /* non-shareable */
+                        MPU_ACCESS_CACHEABLE,                            /* cacheable */
+                        MPU_ACCESS_BUFFERABLE);                          /* bufferable */
     
     /* protect entire DTCM, 128KB, write-back, no write allocate */
-    mpu_set_protection( 0x20000000,                             /* base address */
-                        MPU_REGION_SIZE_128KB,                   /* size */
-                        MPU_REGION_NUMBER1,                      /* region 1 */
-                        MPU_INSTRUCTION_EXEC_PERMIT,             /* allow instruction access */
-                        MPU_TEX_TYPE0,                           /* MPU TEX type 0 */
-                        MPU_AP_FULL_ACCESS,                      /* full access */
-                        MPU_ACCESS_NON_SHAREABLE,                /* non-shareable */
-                        MPU_ACCESS_CACHEABLE,                    /* cacheable */
-                        MPU_ACCESS_BUFFERABLE);                  /* bufferable */
+    mpu_set_protection( 0x20000000,                                 /* base address */
+                        MPU_REGION_SIZE_128KB,                          /* size */
+                        MPU_REGION_NUMBER1,                             /* region 1 */
+                        MPU_INSTRUCTION_EXEC_PERMIT,                      /* allow instruction access */
+                        MPU_TEX_TYPE0,                                   /* MPU TEX type 0 */
+                        MPU_AP_FULL_ACCESS,                               /* full access */
+                        MPU_ACCESS_NON_SHAREABLE,                        /* non-shareable */
+                        MPU_ACCESS_CACHEABLE,                            /* cacheable */
+                        MPU_ACCESS_BUFFERABLE);                          /* bufferable */
 
     /* protect entire AXI SRAM, 832KB, write-through, no write allocate */
-    mpu_set_protection( 0x24000000,                             /* base address */
-                        MPU_REGION_SIZE_512KB,                   /* size */
-                        MPU_REGION_NUMBER2,                      /* region 2 */
-                        MPU_INSTRUCTION_EXEC_PERMIT,             /* allow instruction access */
-                        MPU_TEX_TYPE0,                           /* MPU TEX type 0 */
-                        MPU_AP_FULL_ACCESS,                      /* full access */
-                        MPU_ACCESS_SHAREABLE,                    /* shareable */
-                        MPU_ACCESS_CACHEABLE,                    /* cacheable */
-                        MPU_ACCESS_NON_BUFFERABLE);              /* non-bufferable */
+    mpu_set_protection( 0x24000000,                                 /* base address */
+                        MPU_REGION_SIZE_512KB,                          /* size */
+                        MPU_REGION_NUMBER2,                             /* region 2 */
+                        MPU_INSTRUCTION_EXEC_PERMIT,                      /* allow instruction access */
+                        MPU_TEX_TYPE0,                                   /* MPU TEX type 0 */
+                        MPU_AP_FULL_ACCESS,                               /* full access */
+                        MPU_ACCESS_SHAREABLE,                            /* shareable */
+                        MPU_ACCESS_CACHEABLE,                            /* cacheable */
+                        MPU_ACCESS_NON_BUFFERABLE);                      /* non-bufferable */
     
-    mpu_set_protection( 0x24080000,                             /* base address */
-                        MPU_REGION_SIZE_256KB,                   /* size */
-                        MPU_REGION_NUMBER3,                      /* region 3 */
-                        MPU_INSTRUCTION_EXEC_PERMIT,             /* allow instruction access */
-                        MPU_TEX_TYPE0,                           /* MPU TEX type 0 */
-                        MPU_AP_FULL_ACCESS,                      /* full access */
-                        MPU_ACCESS_SHAREABLE,                    /* shareable */
-                        MPU_ACCESS_CACHEABLE,                    /* cacheable */
-                        MPU_ACCESS_NON_BUFFERABLE);              /* non-bufferable */
+    mpu_set_protection( 0x24080000,                                 /* base address */
+                        MPU_REGION_SIZE_256KB,                          /* size */
+                        MPU_REGION_NUMBER3,                             /* region 3 */
+                        MPU_INSTRUCTION_EXEC_PERMIT,                      /* allow instruction access */
+                        MPU_TEX_TYPE0,                                   /* MPU TEX type 0 */
+                        MPU_AP_FULL_ACCESS,                               /* full access */
+                        MPU_ACCESS_SHAREABLE,                            /* shareable */
+                        MPU_ACCESS_CACHEABLE,                            /* cacheable */
+                        MPU_ACCESS_NON_BUFFERABLE);                      /* non-bufferable */
                         
-    mpu_set_protection( 0x240B0000,                             /* base address */
-                        MPU_REGION_SIZE_64KB,                    /* size */
-                        MPU_REGION_NUMBER4,                      /* region 4 */
-                        MPU_INSTRUCTION_EXEC_PERMIT,             /* allow instruction access */
-                        MPU_TEX_TYPE0,                           /* MPU TEX type 0 */
-                        MPU_AP_FULL_ACCESS,                      /* full access */
-                        MPU_ACCESS_SHAREABLE,                    /* shareable */
-                        MPU_ACCESS_CACHEABLE,                    /* cacheable */
-                        MPU_ACCESS_NON_BUFFERABLE);              /* non-bufferable */
+    mpu_set_protection( 0x240C0000,                                 /* base address */
+                        MPU_REGION_SIZE_64KB,                           /* size */
+                        MPU_REGION_NUMBER4,                             /* region 4 */
+                        MPU_INSTRUCTION_EXEC_PERMIT,                      /* allow instruction access */
+                        MPU_TEX_TYPE0,                                   /* MPU TEX type 0 */
+                        MPU_AP_FULL_ACCESS,                               /* full access */
+                        MPU_ACCESS_SHAREABLE,                            /* shareable */
+                        MPU_ACCESS_CACHEABLE,                            /* cacheable */
+                        MPU_ACCESS_NON_BUFFERABLE);                      /* non-bufferable */
     
     /* protect entire SRAM0~SRAM1, 32KB, non-cacheable */
-    mpu_set_protection( 0x30000000,                             /* base address */
-                        MPU_REGION_SIZE_32KB,                    /* size */
-                        MPU_REGION_NUMBER5,                      /* region 5 */
-                        MPU_INSTRUCTION_EXEC_PERMIT,             /* allow instruction access */
-                        MPU_TEX_TYPE1,                           /* MPU TEX type 1 */
-                        MPU_AP_FULL_ACCESS,                      /* full access */
-                        MPU_ACCESS_SHAREABLE,                    /* shareable */
-                        MPU_ACCESS_NON_CACHEABLE,                /* non-cacheable */
-                        MPU_ACCESS_NON_BUFFERABLE);              /* non-bufferable */
+    mpu_set_protection( 0x30000000,                                 /* base address */
+                        MPU_REGION_SIZE_32KB,                           /* size */
+                        MPU_REGION_NUMBER5,                             /* region 5 */
+                        MPU_INSTRUCTION_EXEC_PERMIT,                      /* allow instruction access */
+                        MPU_TEX_TYPE1,                                   /* MPU TEX type 1 */
+                        MPU_AP_FULL_ACCESS,                               /* full access */
+                        MPU_ACCESS_SHAREABLE,                            /* shareable */
+                        MPU_ACCESS_NON_CACHEABLE,                        /* non-cacheable */
+                        MPU_ACCESS_NON_BUFFERABLE);                      /* non-bufferable */
                         
     /* protect SDRAM region, 32MB, write-back, no write allocate */
-    mpu_set_protection( 0xC0000000,                             /* base address */
-                        MPU_REGION_SIZE_32MB,                    /* size */
-                        MPU_REGION_NUMBER6,                      /* region 6 */
-                        MPU_INSTRUCTION_EXEC_NOT_PERMIT,         /* disable instruction access */
-                        MPU_TEX_TYPE0,                           /* MPU TEX type 0 */
-                        MPU_AP_FULL_ACCESS,                      /* full access */
-                        MPU_ACCESS_NON_SHAREABLE,                /* non-shareable */
-                        MPU_ACCESS_CACHEABLE,                    /* cacheable */
-                        MPU_ACCESS_NON_BUFFERABLE);              /* non-bufferable */
+    mpu_set_protection( 0xC0000000,                                 /* base address */
+                        MPU_REGION_SIZE_32MB,                           /* size */
+                        MPU_REGION_NUMBER6,                             /* region 6 */
+                        MPU_INSTRUCTION_EXEC_NOT_PERMIT,                  /* disable instruction access */
+                        MPU_TEX_TYPE0,                                   /* MPU TEX type 0 */
+                        MPU_AP_FULL_ACCESS,                               /* full access */
+                        MPU_ACCESS_NON_SHAREABLE,                        /* non-shareable */
+                        MPU_ACCESS_CACHEABLE,                            /* cacheable */
+                        MPU_ACCESS_NON_BUFFERABLE);                      /* non-bufferable */
 }

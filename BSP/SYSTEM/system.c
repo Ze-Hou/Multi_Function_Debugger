@@ -4,16 +4,6 @@
     \version    1.0
     \date       2025-07-23
     \author     Ze-Hou
-
-    This file provides functions for:
-    - Getting system device information (Flash/SRAM size, device ID, boot config)
-    - Reading RCU clock frequencies for all clock domains
-    - Printing detailed system information via USART
-    - Enabling CPU cache (I-Cache and D-Cache)
-    - Configuring NVIC vector table relocation
-    - Initializing free watchdog timer (FWDGT)
-    - Setting up DWT (Data Watchpoint and Trace) for precise timing
-    - Configuring peripheral clock sources (PLL1 for ADC/SDIO, PLL2 for TLI)
 */
 
 #include "gd32h7xx_libopt.h"
@@ -67,6 +57,8 @@ static void system_rcu_clock_freq_get(void)
     \param[in]  none
     \param[out] none
     \retval     none
+    \details    Retrieves comprehensive system information including device ID,
+                revision, and all clock frequencies for system monitoring.
 */
 void system_info_get(void)
 {

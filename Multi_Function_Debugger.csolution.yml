@@ -26,7 +26,7 @@ solution:
           images:
             - project-context: Multi_Function_Debugger
           debugger:
-            name: Nu-Link@pyOCD
+            name: CMSIS-DAP@pyOCD
             port: 3333
             protocol: swd
             clock: 10000000

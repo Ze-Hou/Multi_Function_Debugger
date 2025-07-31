@@ -4,14 +4,6 @@
     \version    1.0
     \date       2025-07-23
     \author     Ze-Hou
-
-    This header file provides:
-    - Multi-level debug print macros (ERROR, WARN, INFO, DEBUG)
-    - USART0 configuration and DMA support for system communication
-    - USART1 terminal interface for debugging and user interaction
-    - UART4 wireless module communication interface
-    - Buffer management for all USART/UART peripherals
-    - Function declarations for USART initialization and control
 */
 
 #ifndef __USART_H
@@ -30,7 +22,7 @@
 
 /* current debug level setting */
 #ifndef DEBUG_LEVEL
-#define DEBUG_LEVEL         DEBUG_LEVEL_INFO                                /*!< default debug level */
+#define DEBUG_LEVEL         DEBUG_LEVEL_DEBUG                                /*!< default debug level */
 #endif
 
 /* print macros with different levels */
@@ -84,18 +76,17 @@
 /*!
     \brief USART0 DMA configuration macros
 */
-/* 串口对应的DMA请求通道 */
-/* 通道一保留给tx */
+/* USART corresponding DMA request channel */
+/* channel 1 reserved for TX */
 #define  BSP_USART_RX_DMA_CHANNEL           DMA_CH0                         /*!< USART0 RX DMA channel */
 #define  BSP_USART_DMA_CLOCK                RCU_DMA0                        /*!< DMA clock for USART0 */
 #define  BSP_USART_DMA                      DMA0                            /*!< DMA controller for USART0 */
-/* 外设寄存器地址 */
+/* peripheral register address */
 #define  BSP_USART_RD_ADDRESS               (USART0 + 0x24)                 /*!< USART0 receive data register address */
 
 /*!
     \brief USART0 buffer configuration
 */
-/* 串口缓冲区 */
 #define BSP_USART_RECEIVE_LENGTH        1024                                /*!< USART0 receive buffer length */
 
 extern uint8_t  g_bsp_usart_recv_buff[BSP_USART_RECEIVE_LENGTH+1];          /*!< USART0 receive buffer */
@@ -105,7 +96,6 @@ extern uint8_t  g_bsp_usart_recv_complete_flag;                             /*!<
 /*!
     \brief USART1 terminal configuration macros
 */
-/* 串口终端缓冲区 */
 #define  USART_TERMINAL_RD_ADDRESS               (USART1 + 0x24)             /*!< USART1 receive data register address */
 #define  USART_TERMINAL_TD_ADDRESS               (USART1 + 0x28)             /*!< USART1 transmit data register address */
 
@@ -121,7 +111,6 @@ extern uint8_t  gUsartTerminalSendBuff[USART_TERMINAL_SEND_LENGTH + 1];     /*!<
 /*!
     \brief UART4 wireless module configuration macros
 */
-/* 无线模块串口缓冲区 */
 #define  UART4_RD_ADDRESS               (UART4 + 0x24)                       /*!< UART4 receive data register address */
 #define  UART4_TD_ADDRESS               (UART4 + 0x28)                       /*!< UART4 transmit data register address */
 

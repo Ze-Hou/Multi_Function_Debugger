@@ -34,6 +34,7 @@ OF SUCH DAMAGE.
 
 #include "gd32h7xx_it.h"
 #include <stdio.h>
+
 /*!
     \brief      this function handles NMI exception
     \param[in]  none
