@@ -267,7 +267,7 @@ static uint32_t DAP_Connect(const uint8_t *request, uint8_t *response) {
       break;
   }
   
-    /* 此处自行添加，连接之前清除DBG_ID */
+    /* Add connection here for saving DBG_ID */
     debugger_id = 0;
     debugger_id_update_flag = 0xAA;
 
@@ -845,7 +845,7 @@ static uint32_t DAP_SWD_Transfer(const uint8_t *request, uint8_t *response) {
           *response++ = (uint8_t)(data >> 16);
           *response++ = (uint8_t)(data >> 24);
           
-          /* 此处自行添加，用于保存DBG_ID */
+          /* 锟剿达拷锟斤拷锟斤拷锟斤拷锟接ｏ拷锟斤拷锟节憋拷锟斤拷DBG_ID */
           if(request_value == 2)
           {
               debugger_id = data;

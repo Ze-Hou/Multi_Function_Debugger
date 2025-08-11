@@ -848,17 +848,17 @@ void swd_set_target_reset(uint8_t asserted)
 	/* 本文件中对此函数的使用都是先 asserted=1 调用，延时后 asserted=0 调用，为了只调用一次所以只在第二次调用此函数时执行软件复位 */
     if(asserted == 0)
 	{
-        if (!swd_read_word((0xe000e000) + 0x0D0C, &val))
+        if (!swd_read_word((uint32_t)&SCB->AIRCR, &val))
         {
             return;
         }
-		swd_write_word((uint32_t)&SCB->AIRCR, ((0x5FA << SCB_AIRCR_VECTKEY_Pos) |(val & SCB_AIRCR_PRIGROUP_Msk) | SCB_AIRCR_SYSRESETREQ_Msk));
+		swd_write_word((uint32_t)&SCB->AIRCR, ((uint32_t)(0x5FA << SCB_AIRCR_VECTKEY_Pos) | (val & SCB_AIRCR_PRIGROUP_Msk) | SCB_AIRCR_SYSRESETREQ_Msk));
 	}
 }
 
 uint8_t swd_set_target_state_hw(TARGET_RESET_STATE state)
 {
-    uint32_t val;
+    uint32_t val = 0;
     int8_t ap_retries = 2;
     /* Calling swd_init prior to entering RUN state causes operations to fail. */
     if (state != RUN) {

@@ -242,13 +242,14 @@ static const uint8_t config_descriptor[] = {
         /* Configuration 0 */
         USB_CONFIG_DESCRIPTOR_INIT(USB_CONFIG_SIZE, INTF_NUM, 0x01, USB_CONFIG_BUS_POWERED, USBD_MAX_POWER),
         /* Interface 0 */
-        USB_INTERFACE_DESCRIPTOR_INIT(0x00, 0x00, 0x02, 0xFF, 0x00, 0x00, 0x02),
+        USB_INTERFACE_DESCRIPTOR_INIT(0x00, 0x00, 0x02, 0xFF, 0x00, 0x00, 0x04),
         /* Endpoint OUT 2 */
         USB_ENDPOINT_DESCRIPTOR_INIT(WINUSB_OUT_EP, USB_ENDPOINT_TYPE_BULK, USB_MAX_MPS, 0x00),
         /* Endpoint IN 1 */
         USB_ENDPOINT_DESCRIPTOR_INIT(WINUSB_IN_EP, USB_ENDPOINT_TYPE_BULK, USB_MAX_MPS, 0x00),
-        CDC_ACM_DESCRIPTOR_INIT(0x01, CDC_INT_EP, CDC_OUT_EP, CDC_IN_EP, USB_MAX_MPS, 0x00),
-        MSC_DESCRIPTOR_INIT(0x03, MSC_OUT_EP, MSC_IN_EP, USB_MAX_MPS, 0x00)
+
+        CDC_ACM_DESCRIPTOR_INIT(0x01, CDC_INT_EP, CDC_OUT_EP, CDC_IN_EP, USB_MAX_MPS, 0x05),
+        MSC_DESCRIPTOR_INIT(0x03, MSC_OUT_EP, MSC_IN_EP, USB_MAX_MPS, 0x06)
 };
 
 static const uint8_t device_quality_descriptor[] = {
@@ -270,16 +271,22 @@ static const uint8_t device_quality_descriptor[] = {
 static const char *string_descriptors[] = {
     (const char[]){0x09, 0x04},                            /* Langid */
     "CherryUSB",                                            /* Manufacturer */
-    "CMSIS-DAP(WINUSB)",                                    /* Product */
+    "CMSIS-DAP",                                            /* Product */
     "000000000000000000000000",                             /* Serial Number(32 characters) */
+    "CMSIS-DAP(WinUSB)",                                    /* String for WinUSB */  
+    "CMSIS-DAP(CDC)",                                       /* String for CDC */
+    "CMSIS-DAP(MSC)",                                       /* String for MSC */
 };
 
 typedef struct
 {
     char langid[2];
-    char manufacturer[10];
-    char product[18];
-    char serialnumber[25];
+    char manufacturer[32];
+    char product[32];
+    char serialnumber[24 + 1];
+    char string_for_winusb[32];
+    char string_for_cdc[32];
+    char string_for_msc[32];
 }string_descriptors_update_struct;
 
 static string_descriptors_update_struct string_descriptors_update;
@@ -320,6 +327,16 @@ static const char *string_descriptor_callback(uint8_t speed, uint8_t index)
         case 3:
             address = string_descriptors_update.serialnumber;
             break;
+        case 4:
+            address = string_descriptors_update.string_for_winusb;
+            break;
+        case 5:
+            address = string_descriptors_update.string_for_cdc;
+            break;
+        case 6:
+            address = string_descriptors_update.string_for_msc;
+            break;
+        default: break;
     }
     
 //    return string_descriptors[index];
@@ -462,9 +479,13 @@ void cmsisdap_init(uint8_t busid, uintptr_t reg_base)
     usbd_msosv2_desc_register(busid, &msosv2_desc);
     #else
     memcpy(string_descriptors_update.langid, string_descriptors[0], 2);
-    memcpy(string_descriptors_update.manufacturer, string_descriptors[1], strlen(string_descriptors[1]) + 1);
-    memcpy(string_descriptors_update.product, string_descriptors[2], strlen(string_descriptors[2]) + 1);
-    memcpy(string_descriptors_update.serialnumber, string_descriptors[3], strlen(string_descriptors[3]) + 1);
+    strncpy(string_descriptors_update.manufacturer, string_descriptors[1], sizeof(string_descriptors_update.manufacturer) - 1);
+    strncpy(string_descriptors_update.product, string_descriptors[2], sizeof(string_descriptors_update.product) - 1);
+    strncpy(string_descriptors_update.serialnumber, string_descriptors[3], sizeof(string_descriptors_update.serialnumber) - 1);
+    strncpy(string_descriptors_update.string_for_winusb, string_descriptors[4], sizeof(string_descriptors_update.string_for_winusb) - 1);
+    strncpy(string_descriptors_update.string_for_cdc, string_descriptors[5], sizeof(string_descriptors_update.string_for_cdc) - 1);
+    strncpy(string_descriptors_update.string_for_msc, string_descriptors[6], sizeof(string_descriptors_update.string_for_msc) - 1);
+
     snprintf(string_descriptors_update.serialnumber, strlen(string_descriptors[3]) + 1, "%08X%08X%08X", system_device_info.device_id[2], system_device_info.device_id[1], system_device_info.device_id[0]);
     
     usbd_desc_register(busid, &cmsisdap_descriptor);
