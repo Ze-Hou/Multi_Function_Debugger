@@ -7,7 +7,7 @@
 [多功能调试器]( https://oshwhub.com/zh67888/duo-gong-neng-diao-shi-qi)
 
 ## 软件架构
-<img width="6108" height="5652" alt="软件架构" src="https://github.com/user-attachments/assets/4f1b0a9e-096a-4116-8e9e-a7f4d332b10f" />
+
 
 ## 环境设置
 生成工程后将下方代码添加到.clangd以屏蔽未使用头文件警告
