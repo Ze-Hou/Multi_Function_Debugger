@@ -845,7 +845,7 @@ static uint32_t DAP_SWD_Transfer(const uint8_t *request, uint8_t *response) {
           *response++ = (uint8_t)(data >> 16);
           *response++ = (uint8_t)(data >> 24);
           
-          /* �˴��������ӣ����ڱ���DBG_ID */
+          /* 此处添加连接，用于保存DBG_ID */
           if(request_value == 2)
           {
               debugger_id = data;

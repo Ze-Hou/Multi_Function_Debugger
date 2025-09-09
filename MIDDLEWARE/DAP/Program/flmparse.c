@@ -143,7 +143,7 @@ int FLM_Prase(const void *fpath)
 			}
 			flash_algo.algo_size = pPhdr[i].p_filesz + 32;
 		}
-        else if ((pPhdr[i].p_type == PT_LOAD)&&(i == 1))
+		else if ((pPhdr[i].p_type == PT_LOAD)&&(i == 1))
         {
             if(ReadDataFromFile(fpath, pPhdr[i].p_offset, &flash_device, offsetof(FlashDeviceStruct, sectors)) != 0)
             {
@@ -247,23 +247,23 @@ int FLM_Prase(const void *fpath)
 			{
 				switch (j)
 				{
-				case 0:
-					flash_algo.init = pSymbol->st_value;
-					break;
-				case 1:
-					flash_algo.uninit = pSymbol->st_value;
-					break;
-				case 2:
-					flash_algo.erase_chip = pSymbol->st_value;
-					break;
-				case 3:
-					flash_algo.erase_sector = pSymbol->st_value;
-					break;
-				case 4:
-					flash_algo.program_page = pSymbol->st_value;
-					break;
-				default:
-					break;
+					case 0:
+						flash_algo.init = pSymbol->st_value;
+						break;
+					case 1:
+						flash_algo.uninit = pSymbol->st_value;
+						break;
+					case 2:
+						flash_algo.erase_chip = pSymbol->st_value;
+						break;
+					case 3:
+						flash_algo.erase_sector = pSymbol->st_value;
+						break;
+					case 4:
+						flash_algo.program_page = pSymbol->st_value;
+						break;
+					default:
+						break;
 				}
 			}
 		}

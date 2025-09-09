@@ -527,7 +527,7 @@ void lvgl_setting_creat(lv_obj_t *parent)
     lv_obj_set_style_pad_row(bluetooth_page, 10, 0);
     lv_menu_separator_create(bluetooth_page);
     section = lv_menu_section_create(bluetooth_page);
-    cont = menu_create_text(section, NULL, "等待硬件升级", LV_MENU_ITEM_BUILDER_VARIANT_1);
+    cont = menu_create_text(section, NULL, "等待软件升级", LV_MENU_ITEM_BUILDER_VARIANT_1);
     
     section = lv_menu_section_create(root_page);
     cont = menu_create_text(section, LV_SYMBOL_WIFI, "WIFI", LV_MENU_ITEM_BUILDER_VARIANT_1);
